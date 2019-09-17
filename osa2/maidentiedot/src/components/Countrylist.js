@@ -1,7 +1,7 @@
 import React from 'react';
 import Country from './Country';
 
-const Countrylist = ({ countries, filter, filteredCountries }) => {
+const Countrylist = ({ countries, filter, filteredCountries, setFilter }) => {
   if (filteredCountries.length > 10) {
     return <div>Too many matches, specify another filter</div>;
   }
@@ -10,6 +10,7 @@ const Countrylist = ({ countries, filter, filteredCountries }) => {
       key={country.name}
       country={country}
       filteredCountries={filteredCountries}
+      setFilter={setFilter}
     />
   ));
 };

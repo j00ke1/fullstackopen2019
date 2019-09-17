@@ -41,6 +41,7 @@ const App = () => {
         countries={countries}
         filter={filter}
         filteredCountries={filteredCountries}
+        setFilter={setFilter}
       />
     </div>
   );
