@@ -23,13 +23,6 @@ const App = () => {
     );
   }, [filter, countries]);
 
-  /* useEffect(() => {
-    console.log(countries[0]);
-    return function cleanup() {
-      console.log('cleanup');
-    };
-  }, [countries]); */
-
   const handleFilterChange = e => {
     setFilter(e.target.value);
   };
