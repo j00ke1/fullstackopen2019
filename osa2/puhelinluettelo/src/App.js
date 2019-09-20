@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Filterform from './components/Filterform';
 import NewPersonForm from './components/NewPersonForm';
 import Personlist from './components/Personlist';
+import Notification from './components/Notification';
 
 import personService from './services/persons';
 
@@ -12,6 +13,28 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageStyle, setMessageStyle] = useState({});
+
+  const errorStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  };
+
+  const succesStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  };
 
   useEffect(() => {
     personService.getAll().then(res => {
@@ -71,8 +94,20 @@ const App = () => {
               )
             );
             clearFields();
+            setMessage(`Updated the number of ${newName} to ${newNumber}`);
+            setMessageStyle(succesStyle);
+            setTimeout(() => {
+              setMessage(null);
+            }, 3000);
           })
-          .catch(err => console.log(err));
+          .catch(err => {
+            console.log(err);
+            setMessage('Something went wrong');
+            setMessageStyle(errorStyle);
+            setTimeout(() => {
+              setMessage(null);
+            }, 3000);
+          });
         return;
       } else {
         clearFields();
@@ -88,9 +123,21 @@ const App = () => {
             setPersons(res.data);
           });
           clearFields();
+          setMessage(`Added ${newName} to the phonebook`);
+          setMessageStyle(succesStyle);
+          setTimeout(() => {
+            setMessage(null);
+          }, 3000);
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        setMessage('Something went wrong');
+        setMessageStyle(errorStyle);
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
+      });
 
     // setPersons(persons.concat(newPerson));
   };
@@ -106,14 +153,27 @@ const App = () => {
               setPersons(res.data);
             });
           }
+          setMessage(`Person deleted from the phonebook`);
+          setMessageStyle(succesStyle);
+          setTimeout(() => {
+            setMessage(null);
+          }, 3000);
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+          setMessage('Something went wrong');
+          setMessageStyle(errorStyle);
+          setTimeout(() => {
+            setMessage(null);
+          }, 3000);
+        });
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} messageStyle={messageStyle} />
       <Filterform handleFilterChange={handleFilterChange} filter={filter} />
       <NewPersonForm
         addPerson={addPerson}
