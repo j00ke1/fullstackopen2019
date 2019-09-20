@@ -15,7 +15,6 @@ const App = () => {
 
   useEffect(() => {
     personService.getAll().then(res => {
-      console.log('get', res);
       setPersons(res.data);
     });
   }, []);
@@ -40,50 +39,70 @@ const App = () => {
     setNewNumber(e.target.value);
   };
 
+  const clearFields = () => {
+    setNewName('');
+    setNewNumber('');
+  };
+
   const addPerson = e => {
     e.preventDefault();
-
-    const allNames = persons.map(person => person.name);
-
-    if (allNames.includes(newName)) {
-      alert(`${newName} is already added to phonebook`);
-      return;
-    }
 
     const newPerson = {
       name: newName,
       number: newNumber
     };
+    const allNames = persons.map(person => person.name);
+
+    if (allNames.includes(newName)) {
+      const existingPerson = persons.find(p => p.name === newName);
+
+      const updatedPerson = { ...newPerson, number: newNumber };
+      if (
+        window.confirm(
+          `${newName} already exists. Replace the old number with a new one?`
+        )
+      ) {
+        personService
+          .update(existingPerson.id, updatedPerson)
+          .then(res => {
+            setPersons(
+              persons.map(person =>
+                person.id !== existingPerson.id ? person : res.data
+              )
+            );
+            clearFields();
+          })
+          .catch(err => console.log(err));
+        return;
+      } else {
+        clearFields();
+        return;
+      }
+    }
 
     personService
       .create(newPerson)
       .then(res => {
-        console.log('created:', res);
         if (res.status === 201) {
           personService.getAll().then(res => {
-            console.log('get', res);
             setPersons(res.data);
           });
+          clearFields();
         }
       })
       .catch(err => console.log(err));
 
-    setPersons(persons.concat(newPerson));
-    setNewName('');
-    setNewNumber('');
+    // setPersons(persons.concat(newPerson));
   };
 
   const removePerson = e => {
     const id = e.target.value;
-    console.log(id);
     if (window.confirm('Do you really want to delete this person?')) {
       personService
         .remove(id)
         .then(res => {
-          console.log('poisto', res);
           if (res.status === 200) {
             personService.getAll().then(res => {
-              console.log('get', res);
               setPersons(res.data);
             });
           }
