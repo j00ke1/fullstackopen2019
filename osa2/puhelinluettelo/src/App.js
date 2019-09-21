@@ -26,7 +26,7 @@ const App = () => {
     marginBottom: 10
   };
 
-  const succesStyle = {
+  const successStyle = {
     color: 'green',
     background: 'lightgrey',
     fontSize: 20,
@@ -37,9 +37,12 @@ const App = () => {
   };
 
   useEffect(() => {
-    personService.getAll().then(res => {
-      setPersons(res.data);
-    });
+    personService
+      .getAll()
+      .then(res => {
+        setPersons(res.data);
+      })
+      .catch(err => console.log(err));
   }, []);
 
   useEffect(() => {
@@ -78,7 +81,6 @@ const App = () => {
 
     if (allNames.includes(newName)) {
       const existingPerson = persons.find(p => p.name === newName);
-
       const updatedPerson = { ...newPerson, number: newNumber };
       if (
         window.confirm(
@@ -95,18 +97,20 @@ const App = () => {
             );
             clearFields();
             setMessage(`Updated the number of ${newName} to ${newNumber}`);
-            setMessageStyle(succesStyle);
+            setMessageStyle(successStyle);
             setTimeout(() => {
               setMessage(null);
             }, 3000);
           })
           .catch(err => {
             console.log(err);
-            setMessage('Something went wrong');
+            setMessage(`${newName} has already been deleted from server`);
             setMessageStyle(errorStyle);
             setTimeout(() => {
               setMessage(null);
             }, 3000);
+            setPersons(persons.filter(person => person.name !== newName));
+            clearFields();
           });
         return;
       } else {
@@ -119,12 +123,10 @@ const App = () => {
       .create(newPerson)
       .then(res => {
         if (res.status === 201) {
-          personService.getAll().then(res => {
-            setPersons(res.data);
-          });
+          setPersons(persons.concat(res.data));
           clearFields();
           setMessage(`Added ${newName} to the phonebook`);
-          setMessageStyle(succesStyle);
+          setMessageStyle(successStyle);
           setTimeout(() => {
             setMessage(null);
           }, 3000);
@@ -138,8 +140,6 @@ const App = () => {
           setMessage(null);
         }, 3000);
       });
-
-    // setPersons(persons.concat(newPerson));
   };
 
   const removePerson = e => {
@@ -154,18 +154,21 @@ const App = () => {
             });
           }
           setMessage(`Person deleted from the phonebook`);
-          setMessageStyle(succesStyle);
+          setMessageStyle(successStyle);
           setTimeout(() => {
             setMessage(null);
           }, 3000);
         })
         .catch(err => {
           console.log(err);
-          setMessage('Something went wrong');
+          setMessage('This person has already been deleted');
           setMessageStyle(errorStyle);
           setTimeout(() => {
             setMessage(null);
           }, 3000);
+          personService.getAll().then(res => {
+            setPersons(res.data);
+          });
         });
     }
   };

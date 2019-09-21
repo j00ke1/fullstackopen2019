@@ -1,24 +1,19 @@
 {
   "persons": [
     {
-      "name": "asdfasd",
-      "number": "546",
+      "name": "Juuso",
+      "number": "88",
+      "id": 1
+    },
+    {
+      "name": "Pekka",
+      "number": "66",
+      "id": 2
+    },
+    {
+      "name": "Niilo",
+      "number": "90",
       "id": 3
-    },
-    {
-      "name": "asdtfasd",
-      "number": "65465",
-      "id": 4
-    },
-    {
-      "name": "pertti",
-      "number": "987987",
-      "id": 5
-    },
-    {
-      "name": "k",
-      "number": "123",
-      "id": 6
     }
   ]
 }
