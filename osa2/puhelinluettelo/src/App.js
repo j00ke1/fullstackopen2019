@@ -148,7 +148,7 @@ const App = () => {
       personService
         .remove(id)
         .then(res => {
-          if (res.status === 200) {
+          if (res.status === 204) {
             personService.getAll().then(res => {
               setPersons(res.data);
             });
