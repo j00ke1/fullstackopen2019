@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = 'https://fierce-wildwood-79922.herokuapp.com/api/persons/';
+const baseUrl = '/api/persons/';
 
 const getAll = () => {
   return axios.get(baseUrl);
