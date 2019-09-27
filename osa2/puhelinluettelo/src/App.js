@@ -100,7 +100,7 @@ const App = () => {
             setMessageStyle(successStyle);
             setTimeout(() => {
               setMessage(null);
-            }, 3000);
+            }, 5000);
           })
           .catch(err => {
             console.log(err);
@@ -108,7 +108,7 @@ const App = () => {
             setMessageStyle(errorStyle);
             setTimeout(() => {
               setMessage(null);
-            }, 3000);
+            }, 5000);
             setPersons(persons.filter(person => person.name !== newName));
             clearFields();
           });
@@ -129,16 +129,17 @@ const App = () => {
           setMessageStyle(successStyle);
           setTimeout(() => {
             setMessage(null);
-          }, 3000);
+          }, 5000);
         }
       })
       .catch(err => {
         console.log(err);
-        setMessage('Something went wrong');
+        setMessage(err.response.data.error);
         setMessageStyle(errorStyle);
         setTimeout(() => {
           setMessage(null);
-        }, 3000);
+        }, 5000);
+        clearFields();
       });
   };
 
@@ -153,11 +154,11 @@ const App = () => {
               setPersons(res.data);
             });
           }
-          setMessage(`Person deleted from the phonebook`);
+          setMessage('Person deleted from the phonebook');
           setMessageStyle(successStyle);
           setTimeout(() => {
             setMessage(null);
-          }, 3000);
+          }, 5000);
         })
         .catch(err => {
           console.log(err);
@@ -165,7 +166,7 @@ const App = () => {
           setMessageStyle(errorStyle);
           setTimeout(() => {
             setMessage(null);
-          }, 3000);
+          }, 5000);
           personService.getAll().then(res => {
             setPersons(res.data);
           });
