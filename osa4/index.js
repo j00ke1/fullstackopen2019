@@ -1,24 +1,25 @@
 // require('dotenv').config();
+const app = require('./app');
 const http = require('http');
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-
 const config = require('./utils/config');
+// const express = require('express');
+// const app = express();
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const mongoose = require('mongoose');
+const server = http.createServer(app);
 
-const blogSchema = mongoose.Schema({
+/* const blogSchema = mongoose.Schema({
   title: String,
   author: String,
   url: String,
   likes: Number
-});
+}); */
 
-const Blog = mongoose.model('Blog', blogSchema);
+// const Blog = mongoose.model('Blog', blogSchema);
 
 // const mongoUrl = process.env.MONGODB_URI;
-mongoose
+/* mongoose
   .connect(config.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -31,9 +32,9 @@ mongoose
   });
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json()); */
 
-app.get('/api/blogs', (req, res) => {
+/* app.get('/api/blogs', (req, res) => {
   Blog.find({}).then(blogs => {
     res.json(blogs);
   });
@@ -50,9 +51,9 @@ app.post('/api/blogs', (req, res) => {
   blog.save().then(result => {
     res.status(201).json(result);
   });
-});
+}); */
 
 // const PORT = 3003;
-app.listen(config.PORT, () => {
+server.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`);
 });
