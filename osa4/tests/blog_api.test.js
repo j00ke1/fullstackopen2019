@@ -50,7 +50,7 @@ test('ID field is called id', async () => {
   expect(response.body[0].id).toBeDefined();
 });
 
-test('A valid blog can be added ', async () => {
+test('A valid blog can be added', async () => {
   const newBlog = {
     title: 'Blog 3',
     author: 'Jill Doe'
@@ -68,6 +68,24 @@ test('A valid blog can be added ', async () => {
 
   expect(response.body.length).toBe(initialBlogs.length + 1);
   expect(titles).toContain('Blog 3');
+});
+
+test('Likes defaults to 0', async () => {
+  const newBlog = {
+    title: 'Blog 4',
+    author: 'Jack Doe'
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const response = await api.get('/api/blogs');
+  const i = response.body.length - 1;
+  const newest = response.body[i];
+  expect(newest.likes).toBe(0);
 });
 
 afterAll(async () => {
