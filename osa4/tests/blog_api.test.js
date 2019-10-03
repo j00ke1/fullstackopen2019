@@ -44,6 +44,12 @@ test('The first blog is Blog 1', async () => {
   expect(response.body[0].title).toBe('Blog 1');
 });
 
+test('ID field is called id', async () => {
+  const response = await api.get('/api/blogs');
+
+  expect(response.body[0].id).toBeDefined();
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
