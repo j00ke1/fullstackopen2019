@@ -12,7 +12,7 @@ blogsRouter.get('/', async (req, res) => {
 
 blogsRouter.post('/', async (req, res) => {
   if (!req.body.title || !req.body.url) {
-    res.status(400).send();
+    res.status(400).end();
     return;
   }
 
@@ -26,6 +26,35 @@ blogsRouter.post('/', async (req, res) => {
   try {
     const savedBlog = await blog.save();
     res.status(201).json(savedBlog.toJSON());
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+blogsRouter.put('/:id', async (req, res) => {
+  if (!req.body.likes) {
+    res.status(400).end();
+    return;
+  }
+
+  const updated = {
+    likes: req.body.likes
+  };
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, updated, {
+      new: true
+    });
+    res.json(updatedBlog.toJSON());
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+blogsRouter.delete('/:id', async (req, res) => {
+  try {
+    await Blog.findByIdAndRemove(req.params.id);
+    res.status(204).end();
   } catch (err) {
     console.error(err);
   }
