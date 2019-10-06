@@ -53,7 +53,8 @@ test('ID field is called id', async () => {
 test('A valid blog can be added', async () => {
   const newBlog = {
     title: 'Blog 3',
-    author: 'Jill Doe'
+    author: 'Jill Doe',
+    url: 'blogspot.com'
   };
 
   await api
@@ -73,7 +74,8 @@ test('A valid blog can be added', async () => {
 test('Likes defaults to 0', async () => {
   const newBlog = {
     title: 'Blog 4',
-    author: 'Jack Doe'
+    author: 'Jack Doe',
+    url: 'blogspot.com'
   };
 
   await api
@@ -86,6 +88,36 @@ test('Likes defaults to 0', async () => {
   const i = response.body.length - 1;
   const newest = response.body[i];
   expect(newest.likes).toBe(0);
+});
+
+test('Return 400 if url missing', async () => {
+  const newBlog = {
+    title: 'Blog 4',
+    author: 'Jack Doe'
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400);
+
+  const response = await api.get('/api/blogs');
+  expect(response.body.length).toBe(initialBlogs.length);
+});
+
+test('Return 400 if title missing', async () => {
+  const newBlog = {
+    url: 'blog4.blogspot.com',
+    author: 'Jack Doe'
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400);
+
+  const response = await api.get('/api/blogs');
+  expect(response.body.length).toBe(initialBlogs.length);
 });
 
 afterAll(async () => {
