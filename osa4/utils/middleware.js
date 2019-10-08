@@ -8,11 +8,21 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('authorization');
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    req.token = authorization.substring(7);
+  }
+  next();
+};
+
 const errorHandler = (err, req, res, next) => {
   console.error(err.message);
 
   if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message });
+  } else if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({ error: 'Invalid token' });
   }
 
   next(err);
@@ -20,5 +30,6 @@ const errorHandler = (err, req, res, next) => {
 
 module.exports = {
   requestLogger,
+  tokenExtractor,
   errorHandler
 };
