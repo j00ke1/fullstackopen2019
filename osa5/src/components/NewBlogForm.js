@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 
 import blogService from '../services/blogs';
 
-const NewBlogForm = ({ blogs, setBlogs }) => {
+const NewBlogForm = ({
+  blogs,
+  setBlogs,
+  message,
+  setMessage,
+  messageStyle,
+  setMessageStyle,
+  successStyle,
+  errorStyle
+}) => {
   const [newTitle, setNewTitle] = useState('');
   const [newAuthor, setNewAuthor] = useState('');
   const [newUrl, setNewUrl] = useState('');
@@ -19,13 +28,24 @@ const NewBlogForm = ({ blogs, setBlogs }) => {
       setNewTitle('');
       setNewAuthor('');
       setNewUrl('');
+      setMessage(`New blog ${res.title} added`);
+      setMessageStyle(successStyle);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     } catch (err) {
       console.error(err);
+      setMessage(`Error in adding blog`);
+      setMessageStyle(errorStyle);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     }
   };
 
   return (
     <div>
+      <h3>Add new blog</h3>
       <form onSubmit={addBlog}>
         Title:
         <input
