@@ -19,4 +19,16 @@ const create = async newObject => {
   return res.data;
 };
 
-export default { getAll, create, setToken };
+const update = async object => {
+  const newObject = {
+    user: object.user,
+    likes: object.likes + 1,
+    author: object.author,
+    title: object.title,
+    url: object.url
+  };
+  const res = await axios.put(`${baseUrl}/${object.id}`, newObject);
+  return res.data;
+};
+
+export default { getAll, create, update, setToken };

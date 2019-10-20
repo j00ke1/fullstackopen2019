@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Blog = ({ blog }) => {
+import blogService from '../services/blogs';
+
+const Blog = ({ blog, setBlogs }) => {
   const [expanded, setExpanded] = useState(false);
+  const [likes, setLikes] = useState(blog.likes);
+
+  const showWhenExpanded = { display: expanded ? '' : 'none' };
 
   const blogStyle = {
     padding: 5,
@@ -11,25 +16,33 @@ const Blog = ({ blog }) => {
     borderRadius: '5px'
   };
 
-  if (expanded) {
-    return (
-      <div style={blogStyle}>
-        <div onClick={() => setExpanded(!expanded)}>
-          {blog.title} by {blog.author}
-          <br />
-          <a href={blog.url}>{blog.url}</a>
-          <br />
-          {blog.likes} likes <button>Like</button>
-          <br />
-          Added by {blog.user.name}
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs);
+    });
+  }, [likes, setBlogs]);
+
+  const addLike = async () => {
+    try {
+      const res = await blogService.update(blog);
+      setLikes(res.likes);
+      console.log('Like added');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div style={blogStyle}>
       <div onClick={() => setExpanded(!expanded)}>
         {blog.title} by {blog.author}
+      </div>
+      <div style={showWhenExpanded}>
+        <a href={blog.url}>{blog.url}</a>
+        <br />
+        {blog.likes} likes <button onClick={addLike}>Like</button>
+        <br />
+        Added by {blog.user.name}
       </div>
     </div>
   );

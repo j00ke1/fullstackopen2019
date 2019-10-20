@@ -37,9 +37,6 @@ const App = () => {
     marginBottom: 10
   };
 
-  // const hideWhenVisible = { display: blogFormVisible ? 'none' : '' };
-  // const showWhenVisible = { display: blogFormVisible ? '' : 'none' };
-
   useEffect(() => {
     blogService.getAll().then(initialBlogs => {
       setBlogs(initialBlogs);
@@ -141,21 +138,6 @@ const App = () => {
       <p>
         {user.name} logged in <button onClick={handleLogout}>Logout</button>
       </p>
-      {/* <div style={hideWhenVisible}>
-        <button onClick={() => setBlogFormVisible(true)}>Add new blog</button>
-      </div>
-      <div style={showWhenVisible}>
-        <NewBlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          message={message}
-          setMessage={setMessage}
-          successStyle={successStyle}
-          errorStyle={errorStyle}
-          setMessageStyle={setMessageStyle}
-        />
-        <button onClick={() => setBlogFormVisible(false)}>Cancel</button>
-      </div> */}
 
       <Togglable buttonLabel='Add new blog'>
         <NewBlogForm
@@ -170,7 +152,7 @@ const App = () => {
       </Togglable>
 
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
       ))}
     </div>
   );
