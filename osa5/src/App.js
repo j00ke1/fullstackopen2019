@@ -13,9 +13,9 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const [sortedBlogs, setSortedBlogs] = useState([]);
   const [message, setMessage] = useState('');
   const [messageStyle, setMessageStyle] = useState({});
-  // const [blogFormVisible, setBlogFormVisible] = useState(false);
 
   const errorStyle = {
     color: 'red',
@@ -42,6 +42,13 @@ const App = () => {
       setBlogs(initialBlogs);
     });
   }, []);
+
+  useEffect(() => {
+    const sortedBlogs = blogs.sort((a, b) => {
+      return b.likes - a.likes;
+    });
+    setSortedBlogs(sortedBlogs);
+  }, [blogs]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -151,7 +158,7 @@ const App = () => {
         />
       </Togglable>
 
-      {blogs.map(blog => (
+      {sortedBlogs.map(blog => (
         <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
       ))}
     </div>

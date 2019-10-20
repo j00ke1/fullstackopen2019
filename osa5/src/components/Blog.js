@@ -26,7 +26,6 @@ const Blog = ({ blog, setBlogs }) => {
     try {
       const res = await blogService.update(blog);
       setLikes(res.likes);
-      console.log('Like added');
     } catch (err) {
       console.error(err);
     }
