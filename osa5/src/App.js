@@ -69,6 +69,7 @@ const App = () => {
 
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
 
+      blogService.setToken(user.token);
       setUser(user);
       setUsername('');
       setPassword('');
@@ -159,7 +160,17 @@ const App = () => {
       </Togglable>
 
       {sortedBlogs.map(blog => (
-        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          setBlogs={setBlogs}
+          message={message}
+          setMessage={setMessage}
+          successStyle={successStyle}
+          errorStyle={errorStyle}
+          setMessageStyle={setMessageStyle}
+          user={user}
+        />
       ))}
     </div>
   );
