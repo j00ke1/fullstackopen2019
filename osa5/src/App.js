@@ -16,6 +16,11 @@ const App = () => {
   const [sortedBlogs, setSortedBlogs] = useState([]);
   const [message, setMessage] = useState('');
   const [messageStyle, setMessageStyle] = useState({});
+  const [newTitle, setNewTitle] = useState('');
+  const [newAuthor, setNewAuthor] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+
+  const blogFormRef = React.createRef();
 
   const errorStyle = {
     color: 'red',
@@ -58,6 +63,34 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+
+  const addBlog = async e => {
+    try {
+      e.preventDefault();
+      blogFormRef.current.toggleVisibility();
+      const res = await blogService.create({
+        title: newTitle,
+        author: newAuthor,
+        url: newUrl
+      });
+      setBlogs(blogs.concat(res));
+      setNewTitle('');
+      setNewAuthor('');
+      setNewUrl('');
+      setMessage(`New blog ${res.title} added`);
+      setMessageStyle(successStyle);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    } catch (err) {
+      console.error(err);
+      setMessage('Error in adding blog');
+      setMessageStyle(errorStyle);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    }
+  };
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -147,15 +180,15 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>Logout</button>
       </p>
 
-      <Togglable buttonLabel='Add new blog'>
+      <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
         <NewBlogForm
-          blogs={blogs}
-          setBlogs={setBlogs}
-          message={message}
-          setMessage={setMessage}
-          successStyle={successStyle}
-          errorStyle={errorStyle}
-          setMessageStyle={setMessageStyle}
+          newTitle={newTitle}
+          setNewTitle={setNewTitle}
+          newAuthor={newAuthor}
+          setNewAuthor={setNewAuthor}
+          newUrl={newUrl}
+          setNewUrl={setNewUrl}
+          addBlog={addBlog}
         />
       </Togglable>
 

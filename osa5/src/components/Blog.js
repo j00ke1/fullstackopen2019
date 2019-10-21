@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import blogService from '../services/blogs';
 
 const Blog = ({
   blog,
   setBlogs,
-  message,
   setMessage,
-  messageStyle,
   setMessageStyle,
   successStyle,
-  errorStyle,
   user
 }) => {
   const [expanded, setExpanded] = useState(true);
@@ -83,6 +81,15 @@ const Blog = ({
       </div>
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  setBlogs: PropTypes.func.isRequired,
+  setMessage: PropTypes.func.isRequired,
+  setMessageStyle: PropTypes.func.isRequired,
+  successStyle: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 export default Blog;
