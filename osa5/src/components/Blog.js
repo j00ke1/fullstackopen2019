@@ -11,7 +11,7 @@ const Blog = ({
   successStyle,
   user
 }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
   const showWhenExpanded = { display: expanded ? '' : 'none' };
@@ -65,10 +65,10 @@ const Blog = ({
 
   return (
     <div style={blogStyle}>
-      <div onClick={() => setExpanded(!expanded)}>
+      <div className='titlerow' onClick={() => setExpanded(!expanded)}>
         {blog.title} by {blog.author}
       </div>
-      <div style={showWhenExpanded}>
+      <div style={showWhenExpanded} className='hidden'>
         <a href={blog.url}>{blog.url}</a>
         <br />
         {blog.likes} likes <button onClick={addLike}>Like</button>

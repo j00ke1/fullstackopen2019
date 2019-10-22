@@ -56,7 +56,7 @@ const App = () => {
   }, [blogs]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -100,7 +100,7 @@ const App = () => {
         password
       });
 
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
 
       blogService.setToken(user.token);
       setUser(user);
@@ -124,7 +124,7 @@ const App = () => {
   const handleLogout = () => {
     try {
       if (window.confirm('Are you sure you want to log out?')) {
-        window.localStorage.removeItem('loggedBlogappUser');
+        window.localStorage.removeItem('loggedBlogAppUser');
         setMessage(`${user.name} logged out`);
         setMessageStyle(successStyle);
         setTimeout(() => {
@@ -203,6 +203,7 @@ const App = () => {
           errorStyle={errorStyle}
           setMessageStyle={setMessageStyle}
           user={user}
+          className='blog'
         />
       ))}
     </div>
