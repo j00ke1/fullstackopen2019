@@ -4,21 +4,24 @@ import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import Input from './components/Input';
 
 import loginService from './services/login';
 import blogService from './services/blogs';
+import { useField } from './hooks';
 
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [sortedBlogs, setSortedBlogs] = useState([]);
   const [message, setMessage] = useState('');
   const [messageStyle, setMessageStyle] = useState({});
-  const [newTitle, setNewTitle] = useState('');
-  const [newAuthor, setNewAuthor] = useState('');
-  const [newUrl, setNewUrl] = useState('');
+
+  const username = useField('text');
+  const password = useField('password');
+  const newTitle = useField('text');
+  const newAuthor = useField('text');
+  const newUrl = useField('text');
 
   const blogFormRef = React.createRef();
 
@@ -69,14 +72,14 @@ const App = () => {
       e.preventDefault();
       blogFormRef.current.toggleVisibility();
       const res = await blogService.create({
-        title: newTitle,
-        author: newAuthor,
-        url: newUrl
+        title: newTitle.value,
+        author: newAuthor.value,
+        url: newUrl.value
       });
       setBlogs(blogs.concat(res));
-      setNewTitle('');
-      setNewAuthor('');
-      setNewUrl('');
+      newTitle.reset();
+      newAuthor.reset();
+      newUrl.reset();
       setMessage(`New blog ${res.title} added`);
       setMessageStyle(successStyle);
       setTimeout(() => {
@@ -96,16 +99,16 @@ const App = () => {
     e.preventDefault();
     try {
       const user = await loginService.login({
-        username,
-        password
+        username: username.value,
+        password: password.value
       });
 
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
 
       blogService.setToken(user.token);
       setUser(user);
-      setUsername('');
-      setPassword('');
+      username.reset();
+      password.reset();
       setMessage(`${user.name} logged in`);
       setMessageStyle(successStyle);
       setTimeout(() => {
@@ -149,22 +152,10 @@ const App = () => {
         <Notification message={message} messageStyle={messageStyle} />
         <form onSubmit={handleLogin}>
           <div>
-            Username{' '}
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
+            Username <Input {...username} />
           </div>{' '}
           <div>
-            Password{' '}
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
+            Password <Input {...password} />
           </div>
           <button type='submit'>Login</button>
         </form>
@@ -182,13 +173,10 @@ const App = () => {
 
       <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
         <NewBlogForm
-          newTitle={newTitle}
-          setNewTitle={setNewTitle}
-          newAuthor={newAuthor}
-          setNewAuthor={setNewAuthor}
-          newUrl={newUrl}
-          setNewUrl={setNewUrl}
           addBlog={addBlog}
+          newTitle={newTitle}
+          newAuthor={newAuthor}
+          newUrl={newUrl}
         />
       </Togglable>
 

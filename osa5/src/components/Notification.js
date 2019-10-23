@@ -10,8 +10,8 @@ const Notification = ({ message, messageStyle }) => {
 };
 
 Notification.propTypes = {
-  message: PropTypes.string.isRequired,
-  messageStyle: PropTypes.object.isRequired
+  message: PropTypes.string,
+  messageStyle: PropTypes.object
 };
 
 export default Notification;
