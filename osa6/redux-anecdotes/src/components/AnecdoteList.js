@@ -6,10 +6,10 @@ import { setMessage, removeMessage } from '../reducers/notificationReducer';
 
 const AnecdoteList = props => {
   const vote = anecdote => {
-    props.store.dispatch(voteFor(anecdote.id));
-    props.store.dispatch(setMessage(`You voted for '${anecdote.content}'`));
+    props.voteFor(anecdote.id);
+    props.setMessage(`You voted for '${anecdote.content}'`);
     setTimeout(() => {
-      props.store.dispatch(removeMessage());
+      props.removeMessage();
     }, 5000);
   };
 
@@ -17,28 +17,31 @@ const AnecdoteList = props => {
 
   return (
     <div>
-      {props.anecdotes
-        .filter(anecdote =>
-          anecdote.content.toLowerCase().includes(props.filter.toLowerCase())
-        )
-        .sort(byVotes)
-        .map(anecdote => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
-            <div>
-              has {anecdote.votes}
-              <button onClick={() => vote(anecdote)}>vote</button>
-            </div>
+      {props.visibleAnecdotes.sort(byVotes).map(anecdote => (
+        <div key={anecdote.id}>
+          <div>{anecdote.content}</div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
+  );
+};
+
+const anecdotesToShow = ({ anecdotes, filter }) => {
+  if (filter === '') {
+    return anecdotes;
+  }
+  return anecdotes.filter(anecdote =>
+    anecdote.content.toLowerCase().includes(filter.toLowerCase())
   );
 };
 
 const mapStateToProps = state => {
   return {
-    anecdotes: state.anecdotes,
-    filter: state.filter
+    visibleAnecdotes: anecdotesToShow(state)
   };
 };
 
