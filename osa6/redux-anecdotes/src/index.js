@@ -19,6 +19,10 @@ const store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
+// anecdoteService.getAll().then(anecdotes => {
+//   store.dispatch(initializeAnecdotes(anecdotes));
+// });
+
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
