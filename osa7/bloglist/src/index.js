@@ -1,20 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-
 import App from './App';
-
-import notificationReducer from './reducers/notificationReducer';
-
-const rootReducer = combineReducers({
-  notification: notificationReducer
-});
-
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+import store from './store';
 
 const render = () => {
   ReactDOM.render(

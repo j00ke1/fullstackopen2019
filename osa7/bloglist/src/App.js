@@ -12,10 +12,24 @@ import blogService from './services/blogs';
 import { useField } from './hooks';
 
 import { setMessage, removeMessage } from './reducers/notificationReducer';
+import {
+  initBlogs,
+  createBlog,
+  deleteBlog,
+  likeBlog
+} from './reducers/blogReducer';
 
-const App = props => {
+const App = ({
+  blogs,
+  setMessage,
+  removeMessage,
+  initBlogs,
+  createBlog,
+  deleteBlog,
+  likeBlog
+}) => {
   const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
+  // const [blogs, setBlogs] = useState([]);
 
   const username = useField('text');
   const password = useField('password');
@@ -46,10 +60,8 @@ const App = props => {
   };
 
   useEffect(() => {
-    blogService.getAll().then(initialBlogs => {
-      setBlogs(initialBlogs);
-    });
-  }, []);
+    initBlogs();
+  }, [initBlogs]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
@@ -64,34 +76,58 @@ const App = props => {
     try {
       e.preventDefault();
       blogFormRef.current.toggleVisibility();
-      const res = await blogService.create({
+      const newBlog = {
         title: newTitle.value,
         author: newAuthor.value,
         url: newUrl.value
-      });
-      const blogUser = {
-        username: user.username,
-        name: user.name,
-        id: res.user
       };
-      res.user = blogUser;
-      setBlogs(blogs.concat(res));
+      await createBlog(newBlog, user);
       newTitle.reset();
       newAuthor.reset();
       newUrl.reset();
-      props.setMessage({
-        message: `New blog ${res.title} added`,
+      setMessage({
+        message: `New blog ${newBlog.title} added`,
         style: successStyle
       });
       setTimeout(() => {
-        props.removeMessage();
+        removeMessage();
       }, 3000);
     } catch (err) {
       console.error(err);
-      props.setMessage({ message: 'Error in adding blog', style: errorStyle });
+      setMessage({ message: 'Error in adding blog', style: errorStyle });
       setTimeout(() => {
-        props.removeMessage();
+        removeMessage();
       }, 3000);
+    }
+  };
+
+  const addLike = async blog => {
+    try {
+      likeBlog(blog);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const removeBlog = async blog => {
+    if (
+      window.confirm(
+        `Do you really want to remove ${blog.title} by ${blog.author}?`
+      )
+    ) {
+      try {
+        const removedBlog = blog;
+        await deleteBlog(blog);
+        setMessage({
+          message: `Blog ${removedBlog.title} by ${removedBlog.author} removed`,
+          style: successStyle
+        });
+        setTimeout(() => {
+          removeMessage();
+        }, 3000);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -109,18 +145,18 @@ const App = props => {
       setUser(user);
       username.reset();
       password.reset();
-      props.setMessage({
+      setMessage({
         message: `${user.name} logged in`,
         style: successStyle
       });
       setTimeout(() => {
-        props.removeMessage();
+        removeMessage();
       }, 3000);
     } catch (err) {
       console.error(err);
-      props.setMessage({ message: 'Wrong credentials', style: errorStyle });
+      setMessage({ message: 'Wrong credentials', style: errorStyle });
       setTimeout(() => {
-        props.removeMessage();
+        removeMessage();
       }, 3000);
     }
   };
@@ -129,54 +165,21 @@ const App = props => {
     try {
       if (window.confirm('Are you sure you want to log out?')) {
         window.localStorage.removeItem('loggedBlogAppUser');
-        props.setMessage({
+        setMessage({
           message: `${user.name} logged out`,
           style: successStyle
         });
         setTimeout(() => {
-          props.removeMessage();
+          removeMessage();
         }, 3000);
         setUser(null);
       }
     } catch (err) {
       console.error(err);
-      props.setMessage({ message: 'Logout failed', style: errorStyle });
+      setMessage({ message: 'Logout failed', style: errorStyle });
       setTimeout(() => {
-        props.removeMessage();
+        removeMessage();
       }, 3000);
-    }
-  };
-
-  const addLike = async blog => {
-    try {
-      const updatedBlog = await blogService.update(blog);
-      updatedBlog.user = blog.user;
-      setBlogs(blogs.map(b => (b.id === blog.id ? updatedBlog : b)));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const removeBlog = async blog => {
-    if (
-      window.confirm(
-        `Do you really want to remove ${blog.title} by ${blog.author}?`
-      )
-    ) {
-      try {
-        const removedBlog = blog;
-        await blogService.remove(blog);
-        setBlogs(blogs.filter(b => b.id !== blog.id));
-        props.setMessage({
-          message: `Blog ${removedBlog.title} by ${removedBlog.author} removed`,
-          style: successStyle
-        });
-        setTimeout(() => {
-          props.removeMessage();
-        }, 3000);
-      } catch (err) {
-        console.error(err);
-      }
     }
   };
 
@@ -196,6 +199,10 @@ const App = props => {
         </form>
       </div>
     );
+  }
+
+  if (blogs === []) {
+    return null;
   }
 
   const byLikes = (a, b) => b.likes - a.likes;
@@ -223,7 +230,7 @@ const App = props => {
           blog={blog}
           like={addLike}
           remove={removeBlog}
-          setBlogs={setBlogs}
+          // setBlogs={setBlogs}
           successStyle={successStyle}
           errorStyle={errorStyle}
           user={user}
@@ -235,9 +242,16 @@ const App = props => {
 };
 
 const mapStateToProps = state => {
-  return {};
+  return { blogs: state.blogs };
 };
 
-const mapDispatchToProps = { setMessage, removeMessage };
+const mapDispatchToProps = {
+  setMessage,
+  removeMessage,
+  initBlogs,
+  createBlog,
+  deleteBlog,
+  likeBlog
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
