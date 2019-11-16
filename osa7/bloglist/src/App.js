@@ -16,7 +16,6 @@ import { setMessage, removeMessage } from './reducers/notificationReducer';
 const App = props => {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
-  const [sortedBlogs, setSortedBlogs] = useState([]);
 
   const username = useField('text');
   const password = useField('password');
@@ -53,13 +52,6 @@ const App = props => {
   }, []);
 
   useEffect(() => {
-    const sortedBlogs = blogs.sort((a, b) => {
-      return b.likes - a.likes;
-    });
-    setSortedBlogs(sortedBlogs);
-  }, [blogs]);
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
@@ -77,6 +69,12 @@ const App = props => {
         author: newAuthor.value,
         url: newUrl.value
       });
+      const blogUser = {
+        username: user.username,
+        name: user.name,
+        id: res.user
+      };
+      res.user = blogUser;
       setBlogs(blogs.concat(res));
       newTitle.reset();
       newAuthor.reset();
@@ -149,6 +147,39 @@ const App = props => {
     }
   };
 
+  const addLike = async blog => {
+    try {
+      const updatedBlog = await blogService.update(blog);
+      updatedBlog.user = blog.user;
+      setBlogs(blogs.map(b => (b.id === blog.id ? updatedBlog : b)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const removeBlog = async blog => {
+    if (
+      window.confirm(
+        `Do you really want to remove ${blog.title} by ${blog.author}?`
+      )
+    ) {
+      try {
+        const removedBlog = blog;
+        await blogService.remove(blog);
+        setBlogs(blogs.filter(b => b.id !== blog.id));
+        props.setMessage({
+          message: `Blog ${removedBlog.title} by ${removedBlog.author} removed`,
+          style: successStyle
+        });
+        setTimeout(() => {
+          props.removeMessage();
+        }, 3000);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   if (user === null) {
     return (
       <div>
@@ -167,6 +198,8 @@ const App = props => {
     );
   }
 
+  const byLikes = (a, b) => b.likes - a.likes;
+
   return (
     <div>
       <h2>Blogs</h2>
@@ -184,10 +217,12 @@ const App = props => {
         />
       </Togglable>
 
-      {sortedBlogs.map(blog => (
+      {blogs.sort(byLikes).map(blog => (
         <Blog
           key={blog.id}
           blog={blog}
+          like={addLike}
+          remove={removeBlog}
           setBlogs={setBlogs}
           successStyle={successStyle}
           errorStyle={errorStyle}
