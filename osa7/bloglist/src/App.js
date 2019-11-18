@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Blog from './components/Blog';
@@ -12,6 +12,7 @@ import blogService from './services/blogs';
 import { useField } from './hooks';
 
 import { setMessage, removeMessage } from './reducers/notificationReducer';
+import { setUser, removeUser } from './reducers/userReducer';
 import {
   initBlogs,
   createBlog,
@@ -26,11 +27,11 @@ const App = ({
   initBlogs,
   createBlog,
   deleteBlog,
-  likeBlog
+  likeBlog,
+  user,
+  setUser,
+  removeUser
 }) => {
-  const [user, setUser] = useState(null);
-  // const [blogs, setBlogs] = useState([]);
-
   const username = useField('text');
   const password = useField('password');
   const newTitle = useField('text');
@@ -70,7 +71,7 @@ const App = ({
       setUser(user);
       blogService.setToken(user.token);
     }
-  }, []);
+  }, [setUser]);
 
   const addBlog = async e => {
     try {
@@ -172,7 +173,7 @@ const App = ({
         setTimeout(() => {
           removeMessage();
         }, 3000);
-        setUser(null);
+        removeUser();
       }
     } catch (err) {
       console.error(err);
@@ -230,9 +231,6 @@ const App = ({
           blog={blog}
           like={addLike}
           remove={removeBlog}
-          // setBlogs={setBlogs}
-          successStyle={successStyle}
-          errorStyle={errorStyle}
           user={user}
           className='blog'
         />
@@ -242,7 +240,7 @@ const App = ({
 };
 
 const mapStateToProps = state => {
-  return { blogs: state.blogs };
+  return { blogs: state.blogs, user: state.user };
 };
 
 const mapDispatchToProps = {
@@ -251,7 +249,9 @@ const mapDispatchToProps = {
   initBlogs,
   createBlog,
   deleteBlog,
-  likeBlog
+  likeBlog,
+  setUser,
+  removeUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

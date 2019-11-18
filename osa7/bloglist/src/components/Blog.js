@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Blog = props => {
+const Blog = ({ user, blog, like, remove }) => {
   const [expanded, setExpanded] = useState(false);
 
   const showWhenExpanded = { display: expanded ? '' : 'none' };
   const showWhenBlogOwner = {
-    display: props.user.username === props.blog.user.username ? '' : 'none'
+    display: user.username === blog.user.username ? '' : 'none'
   };
 
   const blogStyle = {
@@ -20,20 +20,16 @@ const Blog = props => {
   return (
     <div style={blogStyle}>
       <div className='titlerow' onClick={() => setExpanded(!expanded)}>
-        {props.blog.title} by {props.blog.author}
+        {blog.title} by {blog.author}
       </div>
       <div style={showWhenExpanded} className='hidden'>
-        <a href={props.blog.url}>{props.blog.url}</a>
+        <a href={blog.url}>{blog.url}</a>
         <br />
-        {props.blog.likes} likes{' '}
-        <button onClick={() => props.like(props.blog)}>Like</button>
+        {blog.likes} likes <button onClick={() => like(blog)}>Like</button>
         <br />
-        Added by {props.blog.user.name}
+        Added by {blog.user.name}
         <br />
-        <button
-          onClick={() => props.remove(props.blog)}
-          style={showWhenBlogOwner}
-        >
+        <button onClick={() => remove(blog)} style={showWhenBlogOwner}>
           Remove
         </button>
       </div>
