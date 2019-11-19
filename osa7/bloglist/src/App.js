@@ -1,11 +1,19 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import {
+  BrowserRouter as Router,
+  Route
+  // Link,
+  // Redirect,
+  // withRouter
+} from 'react-router-dom';
 
 import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import Input from './components/Input';
+import UserList from './components/UserList';
 
 import loginService from './services/login';
 import blogService from './services/blogs';
@@ -13,6 +21,7 @@ import { useField } from './hooks';
 
 import { setMessage, removeMessage } from './reducers/notificationReducer';
 import { setUser, removeUser } from './reducers/userReducer';
+import { initUsers } from './reducers/usersReducer';
 import {
   initBlogs,
   createBlog,
@@ -30,7 +39,8 @@ const App = ({
   likeBlog,
   user,
   setUser,
-  removeUser
+  removeUser,
+  initUsers
 }) => {
   const username = useField('text');
   const password = useField('password');
@@ -63,6 +73,10 @@ const App = ({
   useEffect(() => {
     initBlogs();
   }, [initBlogs]);
+
+  useEffect(() => {
+    initUsers();
+  }, [initUsers]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
@@ -209,33 +223,44 @@ const App = ({
   const byLikes = (a, b) => b.likes - a.likes;
 
   return (
-    <div>
-      <h2>Blogs</h2>
-      <Notification />
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>Logout</button>
-      </p>
-
-      <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
-        <NewBlogForm
-          addBlog={addBlog}
-          newTitle={newTitle}
-          newAuthor={newAuthor}
-          newUrl={newUrl}
+    <>
+      <div>
+        <h2>Blogs</h2>
+        <Notification />
+        <p>
+          {user.name} logged in <button onClick={handleLogout}>Logout</button>
+        </p>
+      </div>
+      <Router>
+        <Route
+          exact
+          path='/'
+          render={() => (
+            <div>
+              <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
+                <NewBlogForm
+                  addBlog={addBlog}
+                  newTitle={newTitle}
+                  newAuthor={newAuthor}
+                  newUrl={newUrl}
+                />
+              </Togglable>
+              {blogs.sort(byLikes).map(blog => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  like={addLike}
+                  remove={removeBlog}
+                  user={user}
+                  className='blog'
+                />
+              ))}
+            </div>
+          )}
         />
-      </Togglable>
-
-      {blogs.sort(byLikes).map(blog => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          like={addLike}
-          remove={removeBlog}
-          user={user}
-          className='blog'
-        />
-      ))}
-    </div>
+        <Route path='/users' render={() => <UserList />} />
+      </Router>
+    </>
   );
 };
 
@@ -251,7 +276,8 @@ const mapDispatchToProps = {
   deleteBlog,
   likeBlog,
   setUser,
-  removeUser
+  removeUser,
+  initUsers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
