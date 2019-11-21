@@ -14,6 +14,7 @@ import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import Input from './components/Input';
 import UserList from './components/UserList';
+import User from './components/User';
 
 import loginService from './services/login';
 import blogService from './services/blogs';
@@ -40,7 +41,8 @@ const App = ({
   user,
   setUser,
   removeUser,
-  initUsers
+  initUsers,
+  users
 }) => {
   const username = useField('text');
   const password = useField('password');
@@ -225,7 +227,7 @@ const App = ({
   return (
     <>
       <div>
-        <h2>Blogs</h2>
+        <h1>Blogs</h1>
         <Notification />
         <p>
           {user.name} logged in <button onClick={handleLogout}>Logout</button>
@@ -258,14 +260,21 @@ const App = ({
             </div>
           )}
         />
-        <Route path='/users' render={() => <UserList />} />
+        <Route exact path='/users' render={() => <UserList />} />
+        <Route
+          exact
+          path='/users/:id'
+          render={({ match }) => (
+            <User user={users.find(user => user.id === match.params.id)} />
+          )}
+        />
       </Router>
     </>
   );
 };
 
 const mapStateToProps = state => {
-  return { blogs: state.blogs, user: state.user };
+  return { blogs: state.blogs, user: state.user, users: state.users };
 };
 
 const mapDispatchToProps = {
