@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
   BrowserRouter as Router,
-  Route
-  // Link,
+  Route,
+  Link
   // Redirect,
   // withRouter
 } from 'react-router-dom';
@@ -224,16 +224,25 @@ const App = ({
 
   const byLikes = (a, b) => b.likes - a.likes;
 
+  const padding = { padding: 5 };
+
   return (
     <>
-      <div>
-        <h1>Blogs</h1>
-        <Notification />
-        <p>
-          {user.name} logged in <button onClick={handleLogout}>Logout</button>
-        </p>
-      </div>
       <Router>
+        <div>
+          <Link style={padding} to='/'>
+            Blogs
+          </Link>
+          <Link style={padding} to='/users'>
+            Users
+          </Link>
+          <h1>Blogs</h1>
+          <Notification />
+          <p>
+            {user.name} logged in <button onClick={handleLogout}>Logout</button>
+          </p>
+        </div>
+        {/* <Router> */}
         <Route
           exact
           path='/'
