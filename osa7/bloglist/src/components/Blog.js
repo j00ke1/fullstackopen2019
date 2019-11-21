@@ -18,6 +18,20 @@ const Blog = ({ user, blog, like, remove, isMinimized }) => {
     borderRadius: '5px'
   };
 
+  const renderComments = comments => {
+    if (comments.length === 0) {
+      return 'No comments';
+    } else {
+      return (
+        <ul>
+          {comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+      );
+    }
+  };
+
   if (isMinimized) {
     return (
       <div style={blogStyle}>
@@ -44,13 +58,18 @@ const Blog = ({ user, blog, like, remove, isMinimized }) => {
       <button onClick={() => remove(blog)} style={showWhenBlogOwner}>
         Remove
       </button>
+      <h3>Comments</h3>
+      {renderComments(blog.comments)}
     </div>
   );
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired
+  blog: PropTypes.object,
+  user: PropTypes.object.isRequired,
+  like: PropTypes.func.isRequired,
+  remove: PropTypes.func.isRequired,
+  isMinimized: PropTypes.bool
 };
 
 export default Blog;

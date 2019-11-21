@@ -218,10 +218,6 @@ const App = ({
     );
   }
 
-  if (blogs === []) {
-    return null;
-  }
-
   const byLikes = (a, b) => b.likes - a.likes;
 
   const padding = { padding: 5 };
@@ -242,7 +238,6 @@ const App = ({
             {user.name} logged in <button onClick={handleLogout}>Logout</button>
           </p>
         </div>
-        {/* <Router> */}
         <Route
           exact
           path='/'

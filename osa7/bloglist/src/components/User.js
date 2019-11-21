@@ -10,8 +10,8 @@ const User = ({ user }) => {
       <h2>{user.name}</h2>
       <h3>Added blogs</h3>
       <ul>
-        {user.blogs.map(b => (
-          <li>{b.title}</li>
+        {user.blogs.map((blog, index) => (
+          <li key={index}>{blog.title}</li>
         ))}
       </ul>
     </div>
