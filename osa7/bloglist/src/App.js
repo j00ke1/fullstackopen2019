@@ -255,6 +255,7 @@ const App = ({
                   remove={removeBlog}
                   user={user}
                   className='blog'
+                  isMinimized={true}
                 />
               ))}
             </div>
@@ -266,6 +267,18 @@ const App = ({
           path='/users/:id'
           render={({ match }) => (
             <User user={users.find(user => user.id === match.params.id)} />
+          )}
+        />
+        <Route
+          exact
+          path='/blogs/:id'
+          render={({ match }) => (
+            <Blog
+              blog={blogs.find(b => b.id === match.params.id)}
+              like={addLike}
+              remove={removeBlog}
+              user={user}
+            />
           )}
         />
       </Router>
