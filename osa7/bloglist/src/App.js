@@ -27,7 +27,8 @@ import {
   initBlogs,
   createBlog,
   deleteBlog,
-  likeBlog
+  likeBlog,
+  commentBlog
 } from './reducers/blogReducer';
 
 const App = ({
@@ -38,6 +39,7 @@ const App = ({
   createBlog,
   deleteBlog,
   likeBlog,
+  commentBlog,
   user,
   setUser,
   removeUser,
@@ -49,6 +51,7 @@ const App = ({
   const newTitle = useField('text');
   const newAuthor = useField('text');
   const newUrl = useField('text');
+  const newComment = useField('text');
 
   const blogFormRef = React.createRef();
 
@@ -118,11 +121,31 @@ const App = ({
     }
   };
 
-  const addLike = async blog => {
+  const addLike = blog => {
     try {
       likeBlog(blog);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const addComment = async (blog, comment) => {
+    try {
+      await commentBlog(blog, comment);
+      newComment.reset();
+      setMessage({
+        message: 'New comment added',
+        style: successStyle
+      });
+      setTimeout(() => {
+        removeMessage();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage({ message: 'Error in adding comment', style: errorStyle });
+      setTimeout(() => {
+        removeMessage();
+      }, 3000);
     }
   };
 
@@ -282,6 +305,8 @@ const App = ({
               like={addLike}
               remove={removeBlog}
               user={user}
+              addComment={addComment}
+              newComment={newComment}
             />
           )}
         />
@@ -301,6 +326,7 @@ const mapDispatchToProps = {
   createBlog,
   deleteBlog,
   likeBlog,
+  commentBlog,
   setUser,
   removeUser,
   initUsers

@@ -2,9 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Blog = ({ user, blog, like, remove, isMinimized }) => {
+import Input from './Input';
+
+const Blog = ({
+  user,
+  blog,
+  like,
+  remove,
+  isMinimized,
+  addComment,
+  newComment
+}) => {
   if (blog === undefined) {
-    return null;
+    return <div>Loading blog...</div>;
   }
   const showWhenBlogOwner = {
     display: user.username === blog.user.username ? '' : 'none'
@@ -20,7 +30,7 @@ const Blog = ({ user, blog, like, remove, isMinimized }) => {
 
   const renderComments = comments => {
     if (comments.length === 0) {
-      return 'No comments';
+      return <div>No comments</div>;
     } else {
       return (
         <ul>
@@ -59,6 +69,10 @@ const Blog = ({ user, blog, like, remove, isMinimized }) => {
         Remove
       </button>
       <h3>Comments</h3>
+      <Input {...newComment} />
+      <button onClick={() => addComment(blog, newComment.value)}>
+        Add comment
+      </button>
       {renderComments(blog.comments)}
     </div>
   );

@@ -12,6 +12,8 @@ export default (state = initialState, { type, payload }) => {
       return state.filter(b => b.id !== payload);
     case 'LIKE_BLOG':
       return state.map(b => (b.id === payload.id ? payload : b));
+    case 'COMMENT_BLOG':
+      return state.map(b => (b.id === payload.id ? payload : b));
     default:
       return state;
   }
@@ -58,6 +60,16 @@ export const likeBlog = blog => {
     const updatedBlog = await blogService.update(blog);
     dispatch({
       type: 'LIKE_BLOG',
+      payload: updatedBlog
+    });
+  };
+};
+
+export const commentBlog = (blog, comment) => {
+  return async dispatch => {
+    const updatedBlog = await blogService.comment(blog, comment);
+    dispatch({
+      type: 'COMMENT_BLOG',
       payload: updatedBlog
     });
   };

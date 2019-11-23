@@ -96,7 +96,11 @@ blogsRouter.post('/:id/comments', async (req, res, next) => {
   }
 
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.id).populate('user', {
+      username: 1,
+      name: 1
+    });
+    console.log(blog);
     blog.comments.push(req.body.comment.toString());
     const savedBlog = await blog.save();
 
