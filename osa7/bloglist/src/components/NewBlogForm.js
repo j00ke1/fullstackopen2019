@@ -1,24 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+
 import Input from './Input';
 
 const NewBlogForm = ({ addBlog, newTitle, newAuthor, newUrl }) => {
   return (
     <div>
       <h3>Add new blog</h3>
-      <form onSubmit={addBlog}>
-        Title:
-        <Input {...newTitle} />
-        <br />
-        Author:
-        <Input {...newAuthor} />
-        <br />
-        URL:
-        <Input {...newUrl} />
-        <br />
-        <button type='submit'>Create</button>
-      </form>
+      <Form onSubmit={addBlog}>
+        <Form.Group>
+          <Form.Label>Title:</Form.Label>
+          <br />
+          <Input {...newTitle} />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Author:</Form.Label>
+          <br />
+          <Input {...newAuthor} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>URL:</Form.Label>
+          <br />
+          <Input {...newUrl} />
+        </Form.Group>
+
+        <Button variant='primary' type='submit'>
+          Create
+        </Button>
+      </Form>
     </div>
   );
 };

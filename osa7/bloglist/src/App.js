@@ -3,10 +3,15 @@ import { connect } from 'react-redux';
 import {
   BrowserRouter as Router,
   Route,
-  Link
-  // Redirect,
-  // withRouter
+  Link,
+  withRouter
 } from 'react-router-dom';
+
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 import Blog from './components/Blog';
 import NewBlogForm from './components/NewBlogForm';
@@ -44,7 +49,8 @@ const App = ({
   setUser,
   removeUser,
   initUsers,
-  users
+  users,
+  history
 }) => {
   const username = useField('text');
   const password = useField('password');
@@ -54,26 +60,6 @@ const App = ({
   const newComment = useField('text');
 
   const blogFormRef = React.createRef();
-
-  const errorStyle = {
-    color: 'red',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  };
-
-  const successStyle = {
-    color: 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10
-  };
 
   useEffect(() => {
     initBlogs();
@@ -107,14 +93,14 @@ const App = ({
       newUrl.reset();
       setMessage({
         message: `New blog ${newBlog.title} added`,
-        style: successStyle
+        style: 'success'
       });
       setTimeout(() => {
         removeMessage();
       }, 3000);
     } catch (err) {
       console.error(err);
-      setMessage({ message: 'Error in adding blog', style: errorStyle });
+      setMessage({ message: 'Error in adding blog', style: 'danger' });
       setTimeout(() => {
         removeMessage();
       }, 3000);
@@ -135,14 +121,14 @@ const App = ({
       newComment.reset();
       setMessage({
         message: 'New comment added',
-        style: successStyle
+        style: 'success'
       });
       setTimeout(() => {
         removeMessage();
       }, 3000);
     } catch (err) {
       console.error(err);
-      setMessage({ message: 'Error in adding comment', style: errorStyle });
+      setMessage({ message: 'Error in adding comment', style: 'danger' });
       setTimeout(() => {
         removeMessage();
       }, 3000);
@@ -158,9 +144,10 @@ const App = ({
       try {
         const removedBlog = blog;
         await deleteBlog(blog);
+        history.push('/');
         setMessage({
           message: `Blog ${removedBlog.title} by ${removedBlog.author} removed`,
-          style: successStyle
+          style: 'success'
         });
         setTimeout(() => {
           removeMessage();
@@ -187,14 +174,14 @@ const App = ({
       password.reset();
       setMessage({
         message: `${user.name} logged in`,
-        style: successStyle
+        style: 'success'
       });
       setTimeout(() => {
         removeMessage();
       }, 3000);
     } catch (err) {
       console.error(err);
-      setMessage({ message: 'Wrong credentials', style: errorStyle });
+      setMessage({ message: 'Wrong credentials', style: 'danger' });
       setTimeout(() => {
         removeMessage();
       }, 3000);
@@ -207,7 +194,7 @@ const App = ({
         window.localStorage.removeItem('loggedBlogAppUser');
         setMessage({
           message: `${user.name} logged out`,
-          style: successStyle
+          style: 'success'
         });
         setTimeout(() => {
           removeMessage();
@@ -216,7 +203,7 @@ const App = ({
       }
     } catch (err) {
       console.error(err);
-      setMessage({ message: 'Logout failed', style: errorStyle });
+      setMessage({ message: 'Logout failed', style: 'danger' });
       setTimeout(() => {
         removeMessage();
       }, 3000);
@@ -225,41 +212,63 @@ const App = ({
 
   if (user === null) {
     return (
-      <div>
+      <Container>
         <h2>Log in to application</h2>
         <Notification />
-        <form onSubmit={handleLogin}>
-          <div>
-            Username <Input {...username} />
-          </div>{' '}
-          <div>
-            Password <Input {...password} />
-          </div>
-          <button type='submit'>Login</button>
-        </form>
-      </div>
+        <Form onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <br />
+            <Input {...username} />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <br />
+            <Input {...password} />
+          </Form.Group>
+          <Button variant='primary' type='submit'>
+            Login
+          </Button>
+        </Form>
+      </Container>
     );
   }
 
   const byLikes = (a, b) => b.likes - a.likes;
 
-  const padding = { padding: 5 };
+  const linkStyle = { color: 'white' };
 
   return (
-    <>
-      <Router>
+    <Router>
+      <Navbar bg='primary' variant='dark' expand='md'>
+        <Container>
+          <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+          <Navbar.Collapse id='responsive-navbar-nav'>
+            <Nav className='mr-auto'>
+              <Nav.Link as='span'>
+                <Link to='/' style={linkStyle}>
+                  Blogs
+                </Link>
+              </Nav.Link>
+              <Nav.Link as='span'>
+                <Link to='/users' style={linkStyle}>
+                  Users
+                </Link>
+              </Nav.Link>
+            </Nav>
+            <Nav className='ml-auto'>
+              <Navbar.Text className='mr-2'>{user.name} logged in</Navbar.Text>
+              <Button variant='outline-light' onClick={handleLogout}>
+                Logout
+              </Button>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Container>
         <div>
-          <Link style={padding} to='/'>
-            Blogs
-          </Link>
-          <Link style={padding} to='/users'>
-            Users
-          </Link>
           <h1>Blogs</h1>
           <Notification />
-          <p>
-            {user.name} logged in <button onClick={handleLogout}>Logout</button>
-          </p>
         </div>
         <Route
           exact
@@ -310,8 +319,8 @@ const App = ({
             />
           )}
         />
-      </Router>
-    </>
+      </Container>
+    </Router>
   );
 };
 
@@ -332,4 +341,4 @@ const mapDispatchToProps = {
   initUsers
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

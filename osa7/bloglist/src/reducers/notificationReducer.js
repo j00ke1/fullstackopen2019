@@ -1,6 +1,6 @@
 const initialState = {
   messageText: null,
-  messageStyle: {}
+  alertVariant: ''
 };
 
 const notificationReducer = (state = initialState, { type, payload }) => {
@@ -8,14 +8,14 @@ const notificationReducer = (state = initialState, { type, payload }) => {
     case 'SET_MESSAGE':
       return {
         messageText: payload.message,
-        messageStyle: payload.style
+        alertVariant: payload.style
       };
     case 'REMOVE_MESSAGE':
       return initialState;
     default:
       return {
         messageText: state.messageText,
-        messageStyle: state.messageStyle
+        alertVariant: state.alertVariant
       };
   }
 };

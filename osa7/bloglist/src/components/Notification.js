@@ -2,11 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import Alert from 'react-bootstrap/Alert';
+
 const Notification = props => {
   if (props.message === null) {
     return null;
   }
-  return <div style={props.messageStyle}>{props.message}</div>;
+  return <Alert variant={props.alertVariant}>{props.message}</Alert>;
 };
 
 Notification.propTypes = {
@@ -17,7 +19,7 @@ Notification.propTypes = {
 const mapStateToProps = state => {
   return {
     message: state.notification.messageText,
-    messageStyle: state.notification.messageStyle
+    alertVariant: state.notification.alertVariant
   };
 };
 

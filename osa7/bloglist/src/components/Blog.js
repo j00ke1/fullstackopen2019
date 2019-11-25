@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+
+import Button from 'react-bootstrap/Button';
 
 import Input from './Input';
 
@@ -14,7 +16,7 @@ const Blog = ({
   newComment
 }) => {
   if (blog === undefined) {
-    return <div>Loading blog...</div>;
+    return <Redirect to='/' />;
   }
   const showWhenBlogOwner = {
     display: user.username === blog.user.username ? '' : 'none'
@@ -24,7 +26,7 @@ const Blog = ({
     padding: 5,
     border: 'solid',
     borderWidth: 1,
-    margin: 5,
+    marginTop: 5,
     borderRadius: '5px'
   };
 
@@ -61,18 +63,22 @@ const Blog = ({
       </h3>
       <a href={blog.url}>{blog.url}</a>
       <br />
-      {blog.likes} likes <button onClick={() => like(blog)}>Like</button>
+      {blog.likes} likes <Button onClick={() => like(blog)}>Like</Button>
       <br />
       Added by {blog.user.name}
       <br />
-      <button onClick={() => remove(blog)} style={showWhenBlogOwner}>
+      <Button
+        variant='danger'
+        onClick={() => remove(blog)}
+        style={showWhenBlogOwner}
+      >
         Remove
-      </button>
+      </Button>
       <h3>Comments</h3>
       <Input {...newComment} />
-      <button onClick={() => addComment(blog, newComment.value)}>
+      <Button onClick={() => addComment(blog, newComment.value)}>
         Add comment
-      </button>
+      </Button>
       {renderComments(blog.comments)}
     </div>
   );
